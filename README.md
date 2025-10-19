@@ -1,14 +1,6 @@
-아래 내용을 그대로 `README.md`로 붙여 쓰면 돼. 필요하면 나중에 배지/이미지 추가해줄게.
-
----
-
 # TwoOfUsTunes
 
 두 사람의 감정(Valence–Arousal)을 결합해 **공통 분위기의 플레이리스트**를 추천하는 머신러닝 엔진
-
-![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Status](https://img.shields.io/badge/Status-Research--Prototype-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
@@ -16,9 +8,9 @@
 
 ### 목적
 
-* 그날그날 **감정 상태(Valence–Arousal, ±1 범위)**에 맞는 음악을 추천
+* **감정 상태(Valence–Arousal, ±1 범위)**에 맞는 음악을 추천
 * **2인 모드**에서 두 사람의 감정을 조합해 “둘이 들을” 공통 분위기 플레이리스트 생성
-* 행동 피드백(스킵/좋아요/완청)을 받아 **점점 개인화**되는 추천
+* 행동 피드백(스킵/좋아요/완청)을 받아 **점점 개인화**되는 추천 (가능하면)
 
 ### 기본 흐름
 
@@ -33,10 +25,10 @@
 ## 2. 기술 스택
 
 * **언어**: Python 3.10+
-* **ML/데이터**: NumPy, Pandas, scikit-learn, (선택) FAISS, librosa
+* **ML/데이터**: NumPy, Pandas, scikit-learn 
 * **시각화/평가**: Matplotlib
-* **실험**: Jupyter Notebook
-* **CLI/도구**: argparse, tqdm
+* **실험**: 
+* **CLI/도구**: 
 * **패키징**: `requirements.txt` (또는 추후 `pyproject.toml` 전환 가능)
 
 ---
@@ -66,26 +58,10 @@ pip install -r requirements.txt
 
 ### 데이터 준비(예시)
 
-```bash
-# 오디오/가사 피처 추출 (원본은 data/raw/* 에 배치)
-python features/extract_audio.py  --in data/raw --out data/processed/tracks.parquet
-python features/extract_lyric.py  --in data/raw --out data/processed/lyrics.parquet
-```
+
 
 ### 실행 예시 (CLI)
 
-```bash
-# 1인 추천
-python cli.py recommend --v 0.6 --a 0.2 --topk 20 --out results/v1_rec.csv
-
-# 2인 추천
-python cli.py recommend-two \
-  --v1 0.7 --a1 0.4 --v2 -0.2 --a2 0.6 \
-  --strategy avg --w 0.5 --topk 20 --out results/v2_rec.csv
-
-# 오프라인 평가 (예: 추천 결과 vs. 내부 GT)
-python eval/offline_metrics.py --rec results/v1_rec.csv --gt data/processed/ground_truth.csv
-```
 
 ---
 
@@ -149,31 +125,18 @@ __pycache__/
 
 ---
 
-## 5. 브랜치 전략
+## 5. 브랜치 전략 (4개 고정)
 
-* 기본 브랜치: **`main`** (안정 릴리스)
-* 개발 브랜치: **`dev`** (기본 머지 대상)
-* 기능 브랜치: `feature/<키워드>`
-  예) `feature/recommender-topk`, `feature/ser-plugin`
-* 버그픽스: `fix/<키워드>`
-* 문서: `docs/<키워드>`
-* 실험: `exp/<키워드>` (실험용 코드/노트북)
+* `main` : 릴리스/발표용. **직접 푸시/포스푸시 모두 금지**, 태그만 생성.
+* `part/data` : 데이터·피처링 전용
+* `part/model` : 모델·추천 전용
+* `part/sensing` : 입력/감정추정 전용
+* `part/exp` : 실험·평가·문서/CLI 전용
 
-> 규칙: 기능/수정은 **반드시 PR로 `dev`** 에 머지. 검증 후 주기적으로 `main`으로 릴리스.
 
 ---
 
 ## 6. 커밋 컨벤션 (Conventional Commits)
-
-형식:
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
 
 **type 예시**
 
@@ -189,9 +152,14 @@ __pycache__/
 **예시**
 
 ```
-feat(recommender): add top-k cosine similarity ranking
-fix(state): handle empty context gracefully
-docs(readme): update local run commands
+타입: ~내용~ - 브런치 이름
+
+아래 예시입니다.
+
+
+feat: add top-k cosine similarity ranking - data
+fix: handle empty context gracefully - model
+
 ```
 
 ---
@@ -200,64 +168,16 @@ docs(readme): update local run commands
 
 ### 규칙
 
-* 대상 브랜치: 기본 **`dev`**
-* 리뷰어 최소 1명 승인 필요
-* CI 통과(테스트/포맷) 필수
-* PR 단위는 작게, 스쿼시 머지 권장
-
-### 템플릿 ( `.github/PULL_REQUEST_TEMPLATE.md` )
-
-```markdown
-## 목적
-- (이 PR이 해결하는 문제/추가 기능을 한 줄로)
-
-## 주요 변경
-- (핵심 변경 요약)
-- (API/CLI 시그니처 변경 시 표기)
-
-## 체크리스트
-- [ ] 테스트 추가/수정
-- [ ] 로컬에서 기본 실행 확인 (`cli.py` quickstart)
-- [ ] 문서/README 반영
-- [ ] 호환성 이슈 없음
-
-## 스크린샷/로그(선택)
-- (결과 그래프, CLI 출력, 성능 수치 등)
-```
-
 ---
 
 ## 8. 개발 규칙(코드 스타일 & 테스트)
 
-* **PEP8** 준수, 타입힌트 권장
-* 함수/모듈 **docstring** 필수(요약/입출력/예외)
-* 핵심 로직 유닛테스트 필수(`tests/`)
-* 큰 데이터/모델 아티팩트는 **커밋 금지** → `data/raw/*`, `model_artifacts/*`는 gitignore
+- 다른 파트 파일 건들지 않기 , 
 
 ---
 
-## 9. 예시 API (파이썬)
 
-```python
-from engine.recommender import recommend, rerank_two_users
-from engine.state_estimator import estimate
-
-E = estimate({"slider": {"v": 0.5, "a": -0.1}, "context": {"hour": 21, "weather": "rain"}})
-
-items = recommend(state={"v": 0.5, "a": -0.1}, topk=20)
-
-duet = rerank_two_users(
-    e_a=(0.7, 0.4),
-    e_b=(-0.2, 0.6),
-    strategy="avg",
-    w=0.5,
-    topk=20
-)
-```
-
----
-
-## 10. Requirements (의존성)
+## 9. Requirements (의존성)
 
 `requirements.txt` (예시)
 
@@ -279,7 +199,7 @@ tqdm
 ```
 MIT License
 
-Copyright (c) 2025 TwoOfUsTunes
+Copyright (c) 2025 Ahn Jaehyun
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
@@ -302,4 +222,4 @@ THE SOFTWARE.
 
 ---
 
-필요하면 위 PR 템플릿/`.gitignore` 파일도 같이 만들어줄게. README에 **배지/로고**나 **VA 좌표 이미지** 추가할 거면 말만 해!
+
