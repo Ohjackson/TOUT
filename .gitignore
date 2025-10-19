@@ -1,0 +1,16 @@
+# data & artifacts
+data/raw/*
+model_artifacts/*
+results/*.csv
+
+# notebooks
+*.ipynb_checkpoints
+
+# audio
+*.mp3
+*.wav
+
+# env
+.venv/
+__pycache__/
+*.pyc
